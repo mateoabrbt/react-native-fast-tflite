@@ -42,7 +42,7 @@ target_include_directories(
   PRIVATE
   "../cpp"
   "src/main/cpp"
-  "../tensorflow/"
+  "src/main/cpp/lib/tensorflow/headers/"
   "${NODE_MODULES_DIR}/react-native/ReactCommon"
   "${NODE_MODULES_DIR}/react-native/ReactCommon/callinvoker"
   "${NODE_MODULES_DIR}/react-native/ReactAndroid/src/main/jni/react/turbomodule" # <-- CallInvokerHolder JNI wrapper
@@ -54,8 +54,19 @@ target_link_libraries(
   ${PACKAGE_NAME}
   android                         # <-- log
   ReactAndroid::jsi               # <-- jsi.h
-  ReactAndroid::reactnativejni    # <-- CallInvokerImpl
   fbjni::fbjni                    # <-- fbjni.h
   ${TFLITE}
   ${TFLITE_GPU}
 )
+
+if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
+    target_link_libraries(
+        ${PACKAGE_NAME}
+        ReactAndroid::reactnative
+    )
+else()
+    target_link_libraries(
+        ${PACKAGE_NAME}
+        ReactAndroid::reactnativejni
+    )
+endif()
